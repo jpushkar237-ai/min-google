@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mini Google 1998 - First-Year AI Lab</title>
+  <style>
+    /* Reset & Base Styles */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: #f8fafc;
+      color: #1e293b;
+      line-height: 1.5;
+      padding: 24px 16px 60px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* Header & 1998 Logo */
+    header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .logo {
+      font-family: "Times New Roman", Times, Georgia, serif;
+      font-size: 54px;
+      font-weight: bold;
+      letter-spacing: -1px;
+      margin-bottom: 4px;
+      user-select: none;
+    }
+
+    /* Google 1998 Letter Colors */
+    .c-blue   { color: #4285F4; }
+    .c-red    { color: #EA4335; }
+    .c-yellow { color: #FBBC05; }
+    .c-green  { color: #34A853; }
+
+    .year-badge {
+      font-size: 20px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #e0f2fe;
+      color: #0369a1;
+      padding: 2px 10px;
+      border-radius: 14px;
+      vertical-align: middle;
+      font-weight: 700;
+      margin-left: 6px;
+    }
+
+    .subtitle {
+      color: #64748b;
+      font-size: 15px;
+      max-width: 650px;
+      margin: 6px auto 0;
+    }
+
+    /* Search Controls Section */
+    .search-card {
+      background: #ffffff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      border: 1px solid #e2e8f0;
+      max-width: 780px;
+      margin: 0 auto 20px;
+    }
+
+    .search-bar-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .search-input {
+      flex: 1;
+      padding: 12px 16px;
+      font-size: 16px;
+      border: 2px solid #cbd5e1;
+      border-radius: 8px;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .search-input:focus {
+      border-color: #4285F4;
+      box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.2);
+    }
+
+    .btn {
+      padding: 12px 20px;
+      font-size: 15px;
+      font-weight: 600;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.15s ease-in-out;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-search {
+      background-color: #4285F4;
+      color: white;
+    }
+
+    .btn-search:hover {
+      background-color: #3367d6;
+    }
+
+    .btn-rerun {
+      background-color: #0f172a;
+      color: white;
+    }
+
+    .btn-rerun:hover {
+      background-color: #334155;
+    }
+
+    /* Example Buttons */
+    .examples-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      font-size: 14px;
+      color: #64748b;
+    }
+
+    .example-btn {
+      background-color: #f1f5f9;
+      color: #334155;
+      border: 1px solid #e2e8f0;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .example-btn:hover {
+      background-color: #e2e8f0;
+      color: #0f172a;
+      border-color: #cbd5e1;
+    }
+
+    /* Simulation Stats Strip */
+    .stats-strip {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-radius: 8px;
+      padding: 10px 16px;
+      margin: 0 auto 24px;
+      max-width: 780px;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      font-size: 13px;
+      color: #1e40af;
+    }
+
+    .stat-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .stat-highlight {
+      font-weight: 700;
+      color: #1d4ed8;
+      background: #dbeafe;
+      padding: 2px 8px;
+      border-radius: 6px;
+    }
+
+    /* Comparison Grid */
+    .columns-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    @media (max-width: 820px) {
+      .columns-grid {
+        grid-template-columns: 1fr;
+      }
+      .search-bar-row {
+        flex-direction: column;
+      }
+    }
+
+    .ranking-column {
+      background: #ffffff;
+      border-radius: 12px;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .column-header {
+      padding: 16px 20px;
+      border-bottom: 2px solid #f1f5f9;
+    }
+
+    .old-header {
+      background: #fff7ed;
+      border-bottom-color: #fed7aa;
+    }
+
+    .surfer-header {
+      background: #f0fdf4;
+      border-bottom-color: #bbf7d0;
+    }
+
+    .column-title {
+      font-size: 18px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .old-title { color: #9a3412; }
+    .surfer-title { color: #166534; }
+
+    .column-tag {
+      font-size: 12px;
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-weight: 600;
+    }
+
+    .old-tag {
+      background: #ffedd5;
+      color: #c2410c;
+    }
+
+    .surfer-tag {
+      background: #dcfce7;
+      color: #15803d;
+    }
+
+    .column-desc {
+      font-size: 13px;
+      color: #64748b;
+      margin-top: 4px;
+    }
+
+    /* Results List */
+    .results-list {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      flex: 1;
+    }
+
+    /* Result Card */
+    .result-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 14px;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+
+    .result-card:hover {
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+    }
+
+    .card-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+    }
+
+    .rank-url-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .rank-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      font-weight: 700;
+      font-size: 13px;
+      color: #334155;
+      background: #f1f5f9;
+      flex-shrink: 0;
+    }
+
+    .old-rank {
+      background: #ffedd5;
+      color: #9a3412;
+    }
+
+    .surfer-rank {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .card-url {
+      color: #1a0dab;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 14px;
+      word-break: break-all;
+    }
+
+    .card-url:hover {
+      text-decoration: underline;
+    }
+
+    .badge-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      font-size: 12px;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .count-badge {
+      background: #fef3c7;
+      color: #92400e;
+      border: 1px solid #fde68a;
+    }
+
+    .score-badge {
+      background: #dcfce7;
+      color: #15803d;
+      border: 1px solid #bbf7d0;
+    }
+
+    .links-badge {
+      background: #e0f2fe;
+      color: #0369a1;
+      border: 1px solid #bae6fd;
+    }
+
+    .card-text {
+      font-size: 13.5px;
+      color: #475569;
+      line-height: 1.45;
+      background: #f8fafc;
+      padding: 8px 10px;
+      border-radius: 6px;
+      border-left: 3px solid #cbd5e1;
+    }
+
+    /* Word Highlight */
+    mark.highlight {
+      background-color: #fef08a;
+      color: #854d0e;
+      font-weight: 700;
+      padding: 1px 4px;
+      border-radius: 3px;
+    }
+
+    /* Friendly No-Results Message */
+    .no-results-box {
+      display: none;
+      background: #ffffff;
+      border: 2px dashed #cbd5e1;
+      border-radius: 12px;
+      padding: 40px 24px;
+      text-align: center;
+      max-width: 650px;
+      margin: 20px auto;
+    }
+
+    .no-results-emoji {
+      font-size: 48px;
+      margin-bottom: 12px;
+    }
+
+    .no-results-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #1e293b;
+      margin-bottom: 8px;
+    }
+
+    .no-results-desc {
+      color: #64748b;
+      font-size: 14px;
+      margin-bottom: 16px;
+    }
+
+    /* Explanatory lab takeaway */
+    .lab-notes {
+      margin-top: 30px;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+    }
+
+    .lab-notes h3 {
+      font-size: 16px;
+      margin-bottom: 10px;
+      color: #0f172a;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .lab-notes ul {
+      margin-left: 20px;
+      font-size: 13.5px;
+      color: #475569;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .lab-notes code {
+      background: #f1f5f9;
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: #0f172a;
+      font-family: monospace;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <!-- Header with 1998 Colorful Logo -->
+    <header>
+      <div class="logo">
+        <span class="c-blue">M</span><span class="c-red">i</span><span class="c-yellow">n</span><span class="c-blue">i</span> 
+        <span class="c-blue">G</span><span class="c-red">o</span><span class="c-yellow">o</span><span class="c-blue">g</span><span class="c-green">l</span><span class="c-red">e</span><span class="year-badge">1998</span>
+      </div>
+      <p class="subtitle">First-Year AI Lab: Keyword Count (1997) vs. Random Surfer PageRank (1998)</p>
+    </header>
+
+    <!-- Search Controls -->
+    <section class="search-card">
+      <div class="search-bar-row">
+        <input 
+          type="text" 
+          id="searchInput" 
+          class="search-input" 
+          placeholder="Search for a word (e.g., pizza, cricket, movie, exam)..." 
+          value="pizza"
+          autocomplete="off"
+        >
+        <button class="btn btn-search" id="searchButton" onclick="handleSearchClick()">
+          🔍 Search
+        </button>
+        <button class="btn btn-rerun" id="rerunButton" onclick="rerunSurfer()" title="Redo 100,000 moves with fresh random choices">
+          🎲 Run the surfer again
+        </button>
+      </div>
+
+      <!-- Quick Example Buttons -->
+      <div class="examples-row">
+        <span>Try examples:</span>
+        <button class="example-btn" onclick="setQuery('pizza')">🍕 pizza</button>
+        <button class="example-btn" onclick="setQuery('cricket')">🏏 cricket</button>
+        <button class="example-btn" onclick="setQuery('movie')">🎬 movie</button>
+        <button class="example-btn" onclick="setQuery('exam')">📝 exam</button>
+      </div>
+    </section>
+
+    <!-- Simulation Statistics Banner -->
+    <div class="stats-strip" id="statsStrip">
+      <div class="stat-item">
+        <span>Moves:</span>
+        <span class="stat-highlight">100,000</span>
+      </div>
+      <div class="stat-item">
+        <span>Boredom Jump:</span>
+        <span class="stat-highlight">15%</span>
+      </div>
+      <div class="stat-item">
+        <span>Follow Link:</span>
+        <span class="stat-highlight">85%</span>
+      </div>
+      <div class="stat-item">
+        <span>All Scores Sum:</span>
+        <span class="stat-highlight" id="totalScoreSum">100.0%</span>
+      </div>
+    </div>
+
+    <!-- Friendly No-Results Message (hidden by default) -->
+    <div class="no-results-box" id="noResultsBox">
+      <div class="no-results-emoji">🛰️ 404 - Space Empty!</div>
+      <div class="no-results-title" id="noResultsTitle">No matching pages found!</div>
+      <p class="no-results-desc" id="noResultsDesc">
+        Our 1998 dial-up modem beeped and booped through all 19 web pages, but couldn't find that word! Try one of the buttons above like "pizza" or "cricket".
+      </p>
+      <button class="btn btn-search" onclick="setQuery('pizza')">Reset search to "pizza"</button>
+    </div>
+
+    <!-- Side-by-Side Comparison Columns -->
+    <main class="columns-grid" id="columnsGrid">
+      
+      <!-- Left Column: Old Way (1997) -->
+      <section class="ranking-column">
+        <div class="column-header old-header">
+          <div class="column-title old-title">
+            <span>Old way (1997)</span>
+            <span class="column-tag old-tag">Keyword Count</span>
+          </div>
+          <p class="column-desc">Ranks by whole-word occurrences in text. Blind to spam &amp; keyword stuffing!</p>
+        </div>
+        <div class="results-list" id="oldWayList">
+          <!-- Result cards injected by JavaScript -->
+        </div>
+      </section>
+
+      <!-- Right Column: Surfer Way (1998) -->
+      <section class="ranking-column">
+        <div class="column-header surfer-header">
+          <div class="column-title surfer-title">
+            <span>Surfer way (1998)</span>
+            <span class="column-tag surfer-tag">Random Surfer PageRank</span>
+          </div>
+          <p class="column-desc">Ranks by visits from a random surfer over 100,000 moves. Incoming links win!</p>
+        </div>
+        <div class="results-list" id="surferWayList">
+          <!-- Result cards injected by JavaScript -->
+        </div>
+      </section>
+
+    </main>
+
+    <!-- AI Lab Educational Summary -->
+    <footer class="lab-notes">
+      <h3>💡 AI Lab Takeaways (Why Google Won in 1998)</h3>
+      <ul>
+        <li>
+          <strong>The 1997 Problem (Keyword Stuffing):</strong> Search <code>pizza</code> or <code>cricket</code>. The spam pages (<code>pizza-pizza-pizza.com</code> and <code>cricket-cricket-cricket.com</code>) repeat the keyword 10 times to rig the old ranking and take the #1 spot.
+        </li>
+        <li>
+          <strong>The 1998 Solution (Random Surfer):</strong> Because nobody links to the spam pages (<code>Links in: 0</code>), a random web surfer almost never lands on them (~0.8% score, purely from random teleportation). Meanwhile, legitimate websites with high incoming backlinks like <code>best-pizza-pune.com</code> rise to the top!
+        </li>
+      </ul>
+    </footer>
+
+  </div>
+
+  <script>
+    // =========================================================================
+    // 1. DATASET
+    // Each row represents a web page: page id, url, text, and outbound links
+    // =========================================================================
+    const pages = [
+      { page: 1,  url: "pune-food-guide.com",         text: "Where to eat in Pune - vada pav and biryani and pizza", links_to: [2] },
+      { page: 2,  url: "best-pizza-pune.com",          text: "Fresh wood-fired pizza made daily - try our cheese pizza", links_to: [1, 3] },
+      { page: 3,  url: "college-canteen-blog.com",     text: "Student reviews of canteen food and chai and Friday pizza", links_to: [2, 4] },
+      { page: 4,  url: "pizza-recipes-home.com",       text: "Make pizza at home - pizza dough and pizza sauce", links_to: [2, 5] },
+      { page: 5,  url: "cheap-eats-pune.com",          text: "Good food under 100 rupees - misal and dosa and pizza slices", links_to: [2] },
+      { page: 6,  url: "pizza-pizza-pizza.com",        text: "pizza pizza pizza pizza pizza pizza pizza pizza pizza pizza", links_to: [1] },
+      { page: 7,  url: "cricket-live-scores.com",      text: "Live cricket scores and ball by ball cricket updates", links_to: [8, 10] },
+      { page: 8,  url: "ipl-fan-club.in",              text: "IPL fan chat - team news and cricket memes", links_to: [7, 9] },
+      { page: 9,  url: "school-cricket-coach.com",     text: "Learn cricket batting and bowling with simple drills", links_to: [7, 10] },
+      { page: 10, url: "cricket-history-india.com",     text: "Great moments from the history of Indian cricket", links_to: [7] },
+      { page: 11, url: "cricket-cricket-cricket.com",   text: "cricket cricket cricket cricket cricket cricket cricket cricket cricket cricket", links_to: [7] },
+      { page: 12, url: "bollywood-movie-reviews.in",   text: "Honest reviews of every new Bollywood movie released on Friday", links_to: [13, 15] },
+      { page: 13, url: "movie-ticket-offers.com",      text: "Cheap movie tickets and weekend offers in Pune", links_to: [12, 1] },
+      { page: 14, url: "film-club-college.com",         text: "Our college film club watches one movie every week", links_to: [12, 17] },
+      { page: 15, url: "classic-movie-songs.com",       text: "Old movie songs and the stories behind each movie", links_to: [12, 13, 14] },
+      { page: 16, url: "free-movie-free-movie.com",     text: "free movie free movie free movie free movie free movie movie movie movie movie movie", links_to: [12] },
+      { page: 17, url: "exam-tips-for-students.com",    text: "Smart exam tips - sleep well and practise old exam papers", links_to: [18, 3] },
+      { page: 18, url: "college-notes-share.com",       text: "Share class notes with friends before the exam", links_to: [17, 19] },
+      { page: 19, url: "pune-college-news.in",          text: "News from Pune colleges - fest dates and exam timetables and cricket matches", links_to: [1, 7, 12, 17] }
+    ];
+
+    // Fast lookup map to get a page object by its page number
+    const pageById = new Map();
+    pages.forEach(p => pageById.set(p.page, p));
+
+    // =========================================================================
+    // 2. COUNT INCOMING LINKS ("Links in: N")
+    // How many other pages link to this page?
+    // =========================================================================
+    function calculateIncomingLinks() {
+      pages.forEach(p => p.linksIn = 0);
+      pages.forEach(sourcePage => {
+        sourcePage.links_to.forEach(targetId => {
+          const targetPage = pageById.get(targetId);
+          if (targetPage) {
+            targetPage.linksIn++;
+          }
+        });
+      });
+    }
+
+    // =========================================================================
+    // 3. RANKING 2: "Surfer way (1998)"
+    // 1. Start on a random page.
+    // 2. Make 100,000 moves:
+    //    - 15% boredom jump to any random page
+    //    - 85% click a random link from the current page
+    // 3. Count visits for each page.
+    // 4. Surfer score = visits / 100,000 (as percentage)
+    // =========================================================================
+    const TOTAL_MOVES = 100000;
+
+    function runRandomSurfer() {
+      // Reset visits counter for all pages
+      pages.forEach(p => p.visits = 0);
+
+      // Step 1: Start on a random page
+      let currentPage = pages[Math.floor(Math.random() * pages.length)];
+
+      // Step 2: Make 100,000 moves
+      for (let move = 0; move < TOTAL_MOVES; move++) {
+        const getsBored = Math.random() < 0.15;
+        const hasNoLinks = !currentPage.links_to || currentPage.links_to.length === 0;
+
+        if (getsBored || hasNoLinks) {
+          // Jump to any page at random
+          currentPage = pages[Math.floor(Math.random() * pages.length)];
+        } else {
+          // Click one of current page's links at random
+          const randomLinkIndex = Math.floor(Math.random() * currentPage.links_to.length);
+          const nextId = currentPage.links_to[randomLinkIndex];
+          currentPage = pageById.get(nextId);
+        }
+
+        // Step 3: Count how many times each page is visited
+        currentPage.visits++;
+      }
+
+      // Step 4: Surfer score = visits / 100,000, shown as percentage
+      pages.forEach(p => {
+        p.surferScore = (p.visits / TOTAL_MOVES) * 100;
+      });
+
+      // Update the total score display (strictly adds up to 100.0%)
+      const totalScore = pages.reduce((sum, p) => sum + p.surferScore, 0);
+      document.getElementById('totalScoreSum').textContent = totalScore.toFixed(1) + "%";
+    }
+
+    // =========================================================================
+    // 4. RANKING 1: "Old way (1997)"
+    // Count how many times the search word appears in the text as a WHOLE word.
+    // Ignore capital letters.
+    // =========================================================================
+    function countWholeWordMatches(text, searchWord) {
+      if (!searchWord) return 0;
+      // Escape any special regex characters
+      const escaped = searchWord.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      // Whole-word boundary \b, case-insensitive 'i', global 'g'
+      const regex = new RegExp('\\b' + escaped + '\\b', 'gi');
+      const matches = text.match(regex);
+      return matches ? matches.length : 0;
+    }
+
+    // Safely highlight the search word in HTML
+    function highlightSearchWord(text, searchWord) {
+      const escapedText = escapeHtml(text);
+      if (!searchWord) return escapedText;
+      const escapedQuery = searchWord.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const regex = new RegExp('(\\b' + escapedQuery + '\\b)', 'gi');
+      return escapedText.replace(regex, '<mark class="highlight">$1</mark>');
+    }
+
+    // Helper: Escape HTML characters to prevent XSS
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    // =========================================================================
+    // 5. SEARCH & UI RENDERING
+    // =========================================================================
+    function executeSearch(queryWord) {
+      const cleanWord = (queryWord || "").trim();
+
+      const columnsGrid = document.getElementById('columnsGrid');
+      const noResultsBox = document.getElementById('noResultsBox');
+      const oldWayList = document.getElementById('oldWayList');
+      const surferWayList = document.getElementById('surferWayList');
+
+      // If search box is empty
+      if (!cleanWord) {
+        columnsGrid.style.display = 'none';
+        noResultsBox.style.display = 'block';
+        document.getElementById('noResultsTitle').textContent = "Please enter a word to search!";
+        document.getElementById('noResultsDesc').textContent = 'Try one of our quick examples below: "pizza", "cricket", "movie", or "exam".';
+        return;
+      }
+
+      // Filter pages that contain the search word as a whole word
+      const matchingPages = [];
+      pages.forEach(p => {
+        const count = countWholeWordMatches(p.text, cleanWord);
+        if (count > 0) {
+          matchingPages.push({
+            page: p.page,
+            url: p.url,
+            text: p.text,
+            linksIn: p.linksIn,
+            surferScore: p.surferScore,
+            wordCount: count
+          });
+        }
+      });
+
+      // If nothing matches, show friendly funny message
+      if (matchingPages.length === 0) {
+        columnsGrid.style.display = 'none';
+        noResultsBox.style.display = 'block';
+        document.getElementById('noResultsTitle').textContent = `No pages found containing "${escapeHtml(cleanWord)}"!`;
+        document.getElementById('noResultsDesc').innerHTML = `
+          Our 1998 web crawler dialled up on a 56k modem and searched all 19 pages, but found zero whole-word matches.<br>
+          <em>Fun fact: In 1998, Google indexed 26 million pages; our lab has 19! Try <strong>pizza</strong>, <strong>cricket</strong>, <strong>movie</strong>, or <strong>exam</strong>.</em>
+        `;
+        return;
+      }
+
+      // Matches found: show columns grid
+      columnsGrid.style.display = 'grid';
+      noResultsBox.style.display = 'none';
+
+      // --- Left Column: Old Way (1997) ---
+      // Sort by word count descending (highest count first)
+      const oldWaySorted = [...matchingPages].sort((a, b) => b.wordCount - a.wordCount);
+
+      // --- Right Column: Surfer Way (1998) ---
+      // Sort by surfer score descending (highest score first)
+      const surferWaySorted = [...matchingPages].sort((a, b) => b.surferScore - a.surferScore);
+
+      // Render Left Column (Old Way)
+      oldWayList.innerHTML = oldWaySorted.map((item, index) => `
+        <article class="result-card">
+          <div class="card-top">
+            <div class="rank-url-group">
+              <span class="rank-num old-rank">#${index + 1}</span>
+              <a class="card-url" href="http://${escapeHtml(item.url)}" target="_blank" rel="noopener">
+                ${escapeHtml(item.url)}
+              </a>
+            </div>
+            <div class="badge-group">
+              <span class="badge count-badge">${item.wordCount} ${item.wordCount === 1 ? 'word match' : 'word matches'}</span>
+            </div>
+          </div>
+          <div class="card-text">${highlightSearchWord(item.text, cleanWord)}</div>
+        </article>
+      `).join('');
+
+      // Render Right Column (Surfer Way)
+      surferWayList.innerHTML = surferWaySorted.map((item, index) => `
+        <article class="result-card">
+          <div class="card-top">
+            <div class="rank-url-group">
+              <span class="rank-num surfer-rank">#${index + 1}</span>
+              <a class="card-url" href="http://${escapeHtml(item.url)}" target="_blank" rel="noopener">
+                ${escapeHtml(item.url)}
+              </a>
+            </div>
+            <div class="badge-group">
+              <span class="badge score-badge">Surfer score: ${item.surferScore.toFixed(1)}%</span>
+              <span class="badge links-badge">Links in: ${item.linksIn}</span>
+            </div>
+          </div>
+          <div class="card-text">${highlightSearchWord(item.text, cleanWord)}</div>
+        </article>
+      `).join('');
+    }
+
+    // Search button click handler
+    function handleSearchClick() {
+      const input = document.getElementById('searchInput');
+      executeSearch(input.value);
+    }
+
+    // Set query from example buttons and search immediately
+    function setQuery(word) {
+      const input = document.getElementById('searchInput');
+      input.value = word;
+      executeSearch(word);
+    }
+
+    // Re-run the random surfer simulation and refresh results
+    function rerunSurfer() {
+      runRandomSurfer();
+      const currentQuery = document.getElementById('searchInput').value;
+      executeSearch(currentQuery);
+    }
+
+    // Enter key triggers search
+    document.getElementById('searchInput').addEventListener('keydown', function(event) {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        handleSearchClick();
+      }
+    });
+
+    // =========================================================================
+    // 6. INITIALIZATION (Runs once when page opens)
+    // =========================================================================
+    calculateIncomingLinks();
+    runRandomSurfer();
+    // Default search on load: "pizza"
+    executeSearch('pizza');
+  </script>
+</body>
+</html>
+
